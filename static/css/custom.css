@@ -1,0 +1,140 @@
+/* Custom styles for User Management System */
+
+/* Enhance readability of badges */
+.badge {
+    font-size: 0.85em;
+    font-weight: 500;
+    padding: 0.35em 0.65em;
+}
+
+/* Custom shadows */
+.shadow-hover:hover {
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+    transition: box-shadow .3s ease-in-out;
+}
+
+/* Custom transitions */
+.btn {
+    transition: all .2s ease-in-out;
+}
+
+/* Status badges */
+.badge.bg-success {
+    background-color: #198754 !important;
+}
+
+.badge.bg-danger {
+    background-color: #dc3545 !important;
+}
+
+.badge.bg-primary {
+    background-color: #0d6efd !important;
+}
+
+.badge.bg-info {
+    background-color: #0dcaf0 !important;
+}
+
+/* Form enhancements */
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Table enhancements */
+.table > tbody > tr {
+    transition: background-color .2s ease-in-out;
+}
+
+.table > tbody > tr:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+/* Card enhancements */
+.card {
+    transition: transform .2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+/* Modal enhancements */
+.modal-content {
+    border-radius: 0.5rem;
+}
+
+.modal-header {
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+}
+
+/* Navigation enhancements */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+}
+
+/* Hero section enhancements */
+.hero-section {
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6));
+}
+
+.hero-section > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Feature cards */
+.feature-icon {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(13, 110, 253, 0.1);
+    color: #0d6efd;
+    margin-bottom: 1rem;
+}
+
+/* Dashboard stats */
+.stats-card {
+    border-radius: 1rem;
+    border: none;
+    background: linear-gradient(45deg, #0d6efd, #0a58ca);
+    color: white;
+}
+
+.stats-card .card-body {
+    padding: 2rem;
+}
+
+.stats-icon {
+    font-size: 2rem;
+    opacity: 0.8;
+}
+
+/* Form validation styles */
+.was-validated .form-control:valid:focus,
+.form-control.is-valid:focus {
+    border-color: #198754;
+    box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+}
+
+.was-validated .form-control:invalid:focus,
+.form-control.is-invalid:focus {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+}
