@@ -1,0 +1,233 @@
+{% extends 'management/base.html' %}
+
+{% block title %}
+    {% if form.instance.pk %}
+        Edit Operation - {{ form.instance.name }}
+    {% else %}
+        Add New Operation
+    {% endif %}
+    - User Management System
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <!-- Back Button -->
+            <div class="mb-4">
+                <a href="{% url 'operation_list' %}" class="btn btn-outline-primary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Operations
+                </a>
+            </div>
+
+            <!-- Form Card -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-{% if form.instance.pk %}edit{% else %}plus{% endif %} text-primary me-2"></i>
+                        {% if form.instance.pk %}
+                            Edit Operation
+                        {% else %}
+                            Add New Operation
+                        {% endif %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <!-- Feature Selection -->
+                        <div class="mb-3">
+                            <label for="{{ form.feature.id_for_label }}" class="form-label">
+                                Feature <span class="text-danger">*</span>
+                            </label>
+                            {{ form.feature }}
+                            {% if form.feature.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.feature.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">
+                                Select the feature this operation belongs to.
+                            </div>
+                        </div>
+
+                        <!-- Name -->
+                        <div class="mb-3">
+                            <label for="{{ form.name.id_for_label }}" class="form-label">
+                                Operation Name <span class="text-danger">*</span>
+                            </label>
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.name.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">
+                                Choose a unique name for this operation within the selected feature.
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-3">
+                            <label for="{{ form.description.id_for_label }}" class="form-label">
+                                Description <span class="text-danger">*</span>
+                            </label>
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.description.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">
+                                Provide a clear description of what this operation does.
+                            </div>
+                        </div>
+
+                        <!-- Active Status -->
+                        <div class="mb-4">
+                            <div class="form-check">
+                                {{ form.is_active }}
+                                <label class="form-check-label" for="{{ form.is_active.id_for_label }}">
+                                    Active
+                                </label>
+                            </div>
+                            {% if form.is_active.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.is_active.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">
+                                Inactive operations cannot be selected for new permission requests.
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>
+                                {% if form.instance.pk %}
+                                    Save Changes
+                                {% else %}
+                                    Create Operation
+                                {% endif %}
+                            </button>
+                            <a href="{% url 'operation_list' %}" class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            {% if form.instance.pk %}
+                <!-- Audit Information -->
+                <div class="card mt-4">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-history text-primary me-2"></i>Audit Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <p class="mb-1"><strong>Created By:</strong></p>
+                                <p class="text-muted">{{ form.instance.created_by.email }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="mb-1"><strong>Created At:</strong></p>
+                                <p class="text-muted">{{ form.instance.created_at|date:"M d, Y H:i" }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="mb-1"><strong>Last Updated By:</strong></p>
+                                <p class="text-muted">{{ form.instance.updated_by.email }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="mb-1"><strong>Last Updated At:</strong></p>
+                                <p class="text-muted">{{ form.instance.updated_at|date:"M d, Y H:i" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Permission Requests -->
+                <div class="card mt-4">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-key text-primary me-2"></i>Permission Requests
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        {% with requests=form.instance.permission_requests.all %}
+                            {% if requests %}
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>User</th>
+                                                <th>Status</th>
+                                                <th>Requested</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for request in requests %}
+                                                <tr>
+                                                    <td>{{ request.requesting_user.email }}</td>
+                                                    <td>
+                                                        <span class="badge bg-{{ request.status }}">
+                                                            {{ request.get_status_display }}
+                                                        </span>
+                                                    </td>
+                                                    <td>{{ request.created_at|date:"M d, Y" }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <p class="text-muted mb-0">No permission requests have been made for this operation.</p>
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Form validation
+    (function () {
+        'use strict'
+        var forms = document.querySelectorAll('.needs-validation')
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+    })()
+</script>
+{% endblock %}
+{% endblock %}
