@@ -1,0 +1,198 @@
+{% extends 'management/base.html' %}
+
+{% block title %}Request Permission - User Management System{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <h2 class="text-center mb-4">
+                        <i class="fas fa-key text-primary me-2"></i>
+                        Request Permission
+                    </h2>
+
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <!-- App Selection -->
+                        <div class="mb-3">
+                            <label for="{{ form.app.id_for_label }}" class="form-label">
+                                Application <span class="text-danger">*</span>
+                            </label>
+                            {{ form.app }}
+                            {% if form.app.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.app.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Feature Selection -->
+                        <div class="mb-3">
+                            <label for="{{ form.feature.id_for_label }}" class="form-label">
+                                Feature <span class="text-danger">*</span>
+                            </label>
+                            {{ form.feature }}
+                            {% if form.feature.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.feature.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Operation Selection -->
+                        <div class="mb-3">
+                            <label for="{{ form.operation.id_for_label }}" class="form-label">
+                                Operation <small class="text-muted">(Optional)</small>
+                            </label>
+                            {{ form.operation }}
+                            {% if form.operation.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.operation.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">
+                                Leave blank to request access to all operations within the feature.
+                            </div>
+                        </div>
+
+                        <!-- Reason -->
+                        <div class="mb-4">
+                            <label for="{{ form.reason.id_for_label }}" class="form-label">
+                                Reason for Access <span class="text-danger">*</span>
+                            </label>
+                            {{ form.reason }}
+                            {% if form.reason.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.reason.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">
+                                Please provide a detailed explanation of why you need access to this feature/operation.
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-paper-plane me-2"></i>Submit Request
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Information Card -->
+            <div class="card mt-4 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-info-circle text-primary me-2"></i>
+                        Request Process
+                    </h5>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Your request will be reviewed by system administrators
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-envelope text-success me-2"></i>
+                            You'll be notified of the decision via email
+                        </li>
+                        <li>
+                            <i class="fas fa-clock text-success me-2"></i>
+                            Processing typically takes 1-2 business days
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Form validation
+    (function () {
+        'use strict'
+        var forms = document.querySelectorAll('.needs-validation')
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+    })()
+
+    // Dynamic form updates
+    $(document).ready(function() {
+        // Update features when app changes
+        $('#{{ form.app.id_for_label }}').change(function() {
+            var appId = $(this).val();
+            var featureSelect = $('#{{ form.feature.id_for_label }}');
+            var operationSelect = $('#{{ form.operation.id_for_label }}');
+            
+            // Reset feature and operation dropdowns
+            featureSelect.html('<option value="">---------</option>').prop('disabled', !appId);
+            operationSelect.html('<option value="">---------</option>').prop('disabled', true);
+            
+            if (appId) {
+                $.get('{% url "ajax_features" %}', {app_id: appId}, function(features) {
+                    features.forEach(function(feature) {
+                        featureSelect.append($('<option></option>')
+                            .attr('value', feature.id)
+                            .text(feature.name));
+                    });
+                });
+            }
+        });
+
+        // Update operations when feature changes
+        $('#{{ form.feature.id_for_label }}').change(function() {
+            var featureId = $(this).val();
+            var operationSelect = $('#{{ form.operation.id_for_label }}');
+            
+            // Reset operation dropdown
+            operationSelect.html('<option value="">---------</option>').prop('disabled', !featureId);
+            
+            if (featureId) {
+                $.get('{% url "ajax_operations" %}', {feature_id: featureId}, function(operations) {
+                    operations.forEach(function(operation) {
+                        operationSelect.append($('<option></option>')
+                            .attr('value', operation.id)
+                            .text(operation.name));
+                    });
+                });
+            }
+        });
+
+        // Initial state
+        var initialApp = $('#{{ form.app.id_for_label }}').val();
+        var initialFeature = $('#{{ form.feature.id_for_label }}').val();
+        $('#{{ form.feature.id_for_label }}').prop('disabled', !initialApp);
+        $('#{{ form.operation.id_for_label }}').prop('disabled', !initialFeature);
+    });
+</script>
+{% endblock %}
+{% endblock %}
