@@ -1,0 +1,144 @@
+{% extends 'management/base.html' %}
+
+{% block title %}Welcome - User Management System{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section text-center">
+    <div class="container">
+        <h1 class="display-4 mb-4">Welcome to User Management System</h1>
+        <p class="lead mb-5">A comprehensive solution for managing user permissions and access control</p>
+        {% if not user.is_authenticated %}
+            <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
+                <a href="{% url 'register_request' %}" class="btn btn-primary btn-lg px-4 gap-3">
+                    <i class="fas fa-user-plus me-2"></i>Request Registration
+                </a>
+                <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg px-4">
+                    <i class="fas fa-sign-in-alt me-2"></i>Login
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">Key Features</h2>
+        <div class="row g-4">
+            <!-- Feature 1 -->
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-shield-alt fa-3x text-primary"></i>
+                        </div>
+                        <h5 class="card-title">Secure Access Management</h5>
+                        <p class="card-text">Comprehensive system for managing user permissions and access control across different applications.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Feature 2 -->
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-users fa-3x text-primary"></i>
+                        </div>
+                        <h5 class="card-title">User Registration</h5>
+                        <p class="card-text">Streamlined registration process with staff approval system for new user accounts.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Feature 3 -->
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-tasks fa-3x text-primary"></i>
+                        </div>
+                        <h5 class="card-title">Permission Management</h5>
+                        <p class="card-text">Granular control over feature and operation permissions for different applications.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action Section -->
+{% if user.is_authenticated %}
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h2 class="mb-4">Need Additional Permissions?</h2>
+                <p class="lead mb-4">Request access to specific features and operations for your applications.</p>
+                <a href="{% url 'permission_request' %}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-key me-2"></i>Request Permission
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% else %}
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h2 class="mb-4">Get Started Today</h2>
+                <p class="lead mb-4">Join our platform to manage your application permissions efficiently.</p>
+                <a href="{% url 'register_request' %}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-user-plus me-2"></i>Request Registration
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Info Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row g-4">
+            <!-- For Staff -->
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-user-shield me-2 text-primary"></i>For Staff Members
+                        </h5>
+                        <p class="card-text">Staff members can:</p>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>Manage applications and features</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Process registration requests</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Handle permission requests</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Monitor system activity</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- For Users -->
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-user me-2 text-primary"></i>For Users
+                        </h5>
+                        <p class="card-text">Regular users can:</p>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>Request registration</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Request feature permissions</li>
+                            <li><i class="fas fa-check text-success me-2"></i>View granted permissions</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Manage their account</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
