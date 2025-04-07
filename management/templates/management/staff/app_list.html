@@ -1,0 +1,137 @@
+{% extends 'management/base.html' %}
+
+{% block title %}Manage Applications - User Management System{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="fas fa-cogs text-primary me-2"></i>Manage Applications
+        </h2>
+        <a href="{% url 'app_create' %}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Add New Application
+        </a>
+    </div>
+
+    <!-- Apps List -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            {% if apps %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for app in apps %}
+                                <tr>
+                                    <td>{{ app.name }}</td>
+                                    <td>{{ app.description|truncatechars:50 }}</td>
+                                    <td>
+                                        {% if app.is_active %}
+                                            <span class="badge bg-success">Active</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Inactive</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ app.created_at|date:"M d, Y" }}</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{% url 'app_update' app.pk %}" 
+                                               class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <button type="button" 
+                                                    class="btn btn-sm btn-outline-info" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#appDetailsModal{{ app.pk }}">
+                                                <i class="fas fa-info-circle"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Details Modal -->
+                                <div class="modal fade" id="appDetailsModal{{ app.pk }}" tabindex="-1">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">
+                                                    <i class="fas fa-info-circle text-primary me-2"></i>
+                                                    {{ app.name }} Details
+                                                </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row g-3">
+                                                    <div class="col-md-6">
+                                                        <p class="mb-1"><strong>Name:</strong></p>
+                                                        <p class="text-muted">{{ app.name }}</p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p class="mb-1"><strong>Status:</strong></p>
+                                                        <p class="text-muted">
+                                                            {% if app.is_active %}
+                                                                <span class="badge bg-success">Active</span>
+                                                            {% else %}
+                                                                <span class="badge bg-danger">Inactive</span>
+                                                            {% endif %}
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <p class="mb-1"><strong>Description:</strong></p>
+                                                        <p class="text-muted">{{ app.description }}</p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p class="mb-1"><strong>Created By:</strong></p>
+                                                        <p class="text-muted">{{ app.created_by.email }}</p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p class="mb-1"><strong>Created At:</strong></p>
+                                                        <p class="text-muted">{{ app.created_at|date:"M d, Y H:i" }}</p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p class="mb-1"><strong>Last Updated By:</strong></p>
+                                                        <p class="text-muted">{{ app.updated_by.email }}</p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p class="mb-1"><strong>Last Updated At:</strong></p>
+                                                        <p class="text-muted">{{ app.updated_at|date:"M d, Y H:i" }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    Close
+                                                </button>
+                                                <a href="{% url 'app_update' app.pk %}" class="btn btn-primary">
+                                                    <i class="fas fa-edit me-2"></i>Edit
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-info-circle text-muted fa-3x mb-3"></i>
+                    <p class="mb-0">No applications have been created yet.</p>
+                    <a href="{% url 'app_create' %}" class="btn btn-primary mt-3">
+                        <i class="fas fa-plus me-2"></i>Add First Application
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
