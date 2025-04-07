@@ -1,0 +1,176 @@
+{% extends 'management/base.html' %}
+
+{% block title %}Staff Dashboard - User Management System{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Dashboard Header -->
+    <div class="row mb-4">
+        <div class="col">
+            <h2 class="mb-0">
+                <i class="fas fa-tachometer-alt text-primary me-2"></i>Staff Dashboard
+            </h2>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="row g-4 mb-5">
+        <!-- Registration Requests -->
+        <div class="col-md-4">
+            <div class="card h-100 border-primary border-2">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="card-subtitle mb-2 text-muted">Pending Registrations</h6>
+                            <h2 class="card-title mb-0">{{ registration_requests|length }}</h2>
+                        </div>
+                        <div class="bg-primary rounded-circle p-3">
+                            <i class="fas fa-user-plus text-white"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Permission Requests -->
+        <div class="col-md-4">
+            <div class="card h-100 border-success border-2">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="card-subtitle mb-2 text-muted">Pending Permissions</h6>
+                            <h2 class="card-title mb-0">{{ permission_requests|length }}</h2>
+                        </div>
+                        <div class="bg-success rounded-circle p-3">
+                            <i class="fas fa-key text-white"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-3 text-muted">Quick Actions</h6>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'app_list' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-cogs me-2"></i>Manage Apps
+                        </a>
+                        <a href="{% url 'feature_list' %}" class="btn btn-outline-success">
+                            <i class="fas fa-list me-2"></i>Manage Features
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Registration Requests Section -->
+    <div class="card mb-5 shadow-sm">
+        <div class="card-header bg-white">
+            <h5 class="mb-0">
+                <i class="fas fa-user-plus text-primary me-2"></i>Pending Registration Requests
+            </h5>
+        </div>
+        <div class="card-body">
+            {% if registration_requests %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Organization</th>
+                                <th>Requested</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for request in registration_requests %}
+                                <tr>
+                                    <td>{{ request.first_name }} {{ request.last_name }}</td>
+                                    <td>{{ request.email }}</td>
+                                    <td>{{ request.organization }}</td>
+                                    <td>{{ request.created_at|date:"M d, Y" }}</td>
+                                    <td>
+                                        <a href="{% url 'process_registration' request.pk %}" 
+                                           class="btn btn-sm btn-primary">
+                                            <i class="fas fa-eye me-1"></i>Review
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-check-circle text-success fa-3x mb-3"></i>
+                    <p class="mb-0">No pending registration requests.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Permission Requests Section -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-white">
+            <h5 class="mb-0">
+                <i class="fas fa-key text-primary me-2"></i>Pending Permission Requests
+            </h5>
+        </div>
+        <div class="card-body">
+            {% if permission_requests %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>App</th>
+                                <th>Feature</th>
+                                <th>Operation</th>
+                                <th>Requested</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for request in permission_requests %}
+                                <tr>
+                                    <td>{{ request.requesting_user.email }}</td>
+                                    <td>{{ request.app.name }}</td>
+                                    <td>{{ request.feature.name }}</td>
+                                    <td>{{ request.operation.name|default:"-" }}</td>
+                                    <td>{{ request.created_at|date:"M d, Y" }}</td>
+                                    <td>
+                                        <a href="{% url 'process_permission' request.pk %}" 
+                                           class="btn btn-sm btn-primary">
+                                            <i class="fas fa-eye me-1"></i>Review
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-check-circle text-success fa-3x mb-3"></i>
+                    <p class="mb-0">No pending permission requests.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Enable tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+</script>
+{% endblock %}
+{% endblock %}
