@@ -1,0 +1,196 @@
+{% extends 'management/base.html' %}
+
+{% block title %}Manage Features - User Management System{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="fas fa-puzzle-piece text-primary me-2"></i>Manage Features
+        </h2>
+        <a href="{% url 'feature_create' %}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Add New Feature
+        </a>
+    </div>
+
+    <!-- Features List -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            {% if features %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Feature Name</th>
+                                <th>Application</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for feature in features %}
+                                <tr>
+                                    <td>{{ feature.name }}</td>
+                                    <td>
+                                        <span class="badge bg-primary">{{ feature.app.name }}</span>
+                                    </td>
+                                    <td>{{ feature.description|truncatechars:50 }}</td>
+                                    <td>
+                                        {% if feature.is_active %}
+                                            <span class="badge bg-success">Active</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Inactive</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ feature.created_at|date:"M d, Y" }}</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{% url 'feature_update' feature.pk %}" 
+                                               class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <button type="button" 
+                                                    class="btn btn-sm btn-outline-info" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#featureDetailsModal{{ feature.pk }}">
+                                                <i class="fas fa-info-circle"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Details Modal -->
+                                <div class="modal fade" id="featureDetailsModal{{ feature.pk }}" tabindex="-1">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">
+                                                    <i class="fas fa-info-circle text-primary me-2"></i>
+                                                    {{ feature.name }} Details
+                                                </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row g-3">
+                                                    <div class="col-md-6">
+                                                        <p class="mb-1"><strong>Feature Name:</strong></p>
+                                                        <p class="text-muted">{{ feature.name }}</p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p class="mb-1"><strong>Application:</strong></p>
+                                                        <p class="text-muted">{{ feature.app.name }}</p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p class="mb-1"><strong>Status:</strong></p>
+                                                        <p class="text-muted">
+                                                            {% if feature.is_active %}
+                                                                <span class="badge bg-success">Active</span>
+                                                            {% else %}
+                                                                <span class="badge bg-danger">Inactive</span>
+                                                            {% endif %}
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <p class="mb-1"><strong>Description:</strong></p>
+                                                        <p class="text-muted">{{ feature.description }}</p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p class="mb-1"><strong>Created By:</strong></p>
+                                                        <p class="text-muted">{{ feature.created_by.email }}</p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p class="mb-1"><strong>Created At:</strong></p>
+                                                        <p class="text-muted">{{ feature.created_at|date:"M d, Y H:i" }}</p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p class="mb-1"><strong>Last Updated By:</strong></p>
+                                                        <p class="text-muted">{{ feature.updated_by.email }}</p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p class="mb-1"><strong>Last Updated At:</strong></p>
+                                                        <p class="text-muted">{{ feature.updated_at|date:"M d, Y H:i" }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    Close
+                                                </button>
+                                                <a href="{% url 'feature_update' feature.pk %}" class="btn btn-primary">
+                                                    <i class="fas fa-edit me-2"></i>Edit
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-info-circle text-muted fa-3x mb-3"></i>
+                    <p class="mb-0">No features have been created yet.</p>
+                    <a href="{% url 'feature_create' %}" class="btn btn-primary mt-3">
+                        <i class="fas fa-plus me-2"></i>Add First Feature
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Quick Filter -->
+    <div class="card mt-4">
+        <div class="card-body">
+            <h5 class="card-title mb-3">
+                <i class="fas fa-filter text-primary me-2"></i>Quick Filters
+            </h5>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <select class="form-select" id="appFilter">
+                        <option value="">All Applications</option>
+                        {% for app in apps %}
+                            <option value="{{ app.name }}">{{ app.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <select class="form-select" id="statusFilter">
+                        <option value="">All Statuses</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Table filtering
+    $(document).ready(function() {
+        function filterTable() {
+            var appFilter = $('#appFilter').val().toLowerCase();
+            var statusFilter = $('#statusFilter').val().toLowerCase();
+
+            $('tbody tr').each(function() {
+                var app = $(this).find('td:eq(1)').text().toLowerCase();
+                var status = $(this).find('td:eq(3)').text().toLowerCase();
+                
+                var showRow = true;
+                if (appFilter && !app.includes(appFilter)) showRow = false;
+                if (statusFilter && !status.includes(statusFilter)) showRow = false;
+
+                $(this).toggle(showRow);
+            });
+        }
+
+        $('#appFilter, #statusFilter').change(filterTable);
+    });
+</script>
+{% endblock %}
+{% endblock %}
